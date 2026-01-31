@@ -64,16 +64,16 @@ node server.js
 ## 📸 Exempelbilder
 
 ### Grundläggande schema
-*Exempel på grundläggande schema med aktiviteter*
+![Exempel på grundläggande schema](docs/exempel-schema.png)
 
 ### Sammanslagna aktiviteter
-*Exempel på sammanslagna aktiviteter med samma tid*
+![Exempel på sammanslagna aktiviteter](docs/exempel-schema.png)
 
 ### Rebus-regler
-*Exempel på rebus-regler med villkor*
+![Exempel på rebus-regler](docs/exempel-schema.png)
 
 ### Exporterad bild
-*Exempel på exporterad symbol-bild utan text*
+![Exempel på exporterad symbol-bild](docs/exempel-schema.png)
 
 ## 🏗️ Teknisk Arkitektur
 
