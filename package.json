@@ -1,0 +1,13 @@
+{
+  "name": "dagsplanerare",
+  "version": "1.0.0",
+  "description": "Visuell dagsplanerare för barn med symbolstöd",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["aac", "symbols", "children", "schedule", "planner"],
+  "author": "",
+  "license": "MIT"
+}

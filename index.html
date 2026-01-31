@@ -1,0 +1,3059 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dagsplanerare för Barn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --morning: #FFE066;
+            --morning-light: #FFF3B8;
+            --morning-text: #8B6914;
+            --day: #7DD3FC;
+            --day-light: #E0F4FF;
+            --day-text: #0369A1;
+            --evening: #C4B5FD;
+            --evening-light: #EDE9FE;
+            --evening-text: #5B21B6;
+            --night: #4B5563;
+            --night-light: #9CA3AF;
+            --night-text: #F3F4F6;
+            --bg: #FEFCE8;
+            --card-bg: #FFFFFF;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --border: #E5E7EB;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --favorite: #F472B6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFE066 50%, #4ECDC4 100%);
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--text);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 12px var(--shadow);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .control-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-input {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            padding: 0.6rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+            min-width: 120px;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: var(--day);
+        }
+
+        /* Days Grid */
+        .days-container {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .days-1 { grid-template-columns: 1fr; }
+        .days-2 { grid-template-columns: repeat(2, 1fr); }
+        .days-3 { grid-template-columns: repeat(3, 1fr); }
+        .days-4 { grid-template-columns: repeat(2, 1fr); }
+        .days-5 { grid-template-columns: repeat(5, 1fr); }
+        .days-6 { grid-template-columns: repeat(3, 1fr); }
+        .days-7 { grid-template-columns: repeat(7, 1fr); }
+
+        .day-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 16px var(--shadow);
+            overflow: hidden;
+        }
+
+        .day-header {
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .day-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .activities-list {
+            padding: 1rem;
+            min-height: 200px;
+        }
+
+        /* Activity Item */
+        .activity {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            cursor: grab;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .activity:hover {
+            border-color: var(--border);
+        }
+
+        .activity.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .activity.morning { background: var(--morning-light); }
+        .activity.day { background: var(--day-light); }
+        .activity.evening { background: var(--evening-light); }
+
+        /* Grouped Activities */
+        .activity-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            position: relative;
+            min-height: 70px; /* Taller for grouped activities */
+        }
+
+        .activity-group:hover {
+            border-color: var(--border);
+        }
+
+        .activity-group.morning { background: var(--morning-light); }
+        .activity-group.day { background: var(--day-light); }
+        .activity-group.evening { background: var(--evening-light); }
+
+        .activity-symbols-container {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            align-items: center;
+            flex: 0 0 auto;
+        }
+
+        .activity-symbol-small {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px var(--shadow);
+            flex-shrink: 0;
+            border: 1px solid #ddd;
+        }
+
+        .activity-symbol-small img {
+            max-width: 34px;
+            max-height: 34px;
+            object-fit: contain;
+        }
+
+        .activity-symbol-small .activity-symbol-placeholder {
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+
+        .activity-symbol-small-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .activity-symbol-actions {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            display: none;
+            gap: 1px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 4px;
+            padding: 1px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .activity-symbol-small-wrapper:hover .activity-symbol-actions {
+            display: flex;
+        }
+
+        .activity-symbol-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            box-shadow: 0 1px 3px var(--shadow);
+            transition: all 0.2s;
+        }
+
+        .activity-symbol-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .activity-symbol-btn.edit:hover {
+            background: var(--day-light);
+            color: var(--day-text);
+        }
+
+        .activity-symbol-btn.delete:hover {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .activity-time {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid currentColor;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .activity.morning .activity-time { 
+            color: var(--morning-text); 
+            border-color: var(--morning);
+        }
+        .activity.day .activity-time { 
+            color: var(--day-text); 
+            border-color: var(--day);
+        }
+        .activity.evening .activity-time { 
+            color: var(--evening-text); 
+            border-color: var(--evening);
+        }
+
+        /* Clock hands */
+        .clock-hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            background: currentColor;
+            border-radius: 2px;
+        }
+
+        .clock-hand.hour {
+            width: 3px;
+            height: 12px;
+            margin-left: -1.5px;
+        }
+
+        .clock-hand.minute {
+            width: 2px;
+            height: 16px;
+            margin-left: -1px;
+        }
+
+        .clock-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Clock hour markers */
+        .clock-marker {
+            position: absolute;
+            width: 2px;
+            height: 4px;
+            background: currentColor;
+            opacity: 0.3;
+            left: 50%;
+            margin-left: -1px;
+            transform-origin: center 20px;
+        }
+
+        .activity-symbol {
+            width: 55px;
+            height: 55px;
+            border-radius: var(--radius-sm);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .activity-symbol img {
+            max-width: 48px;
+            max-height: 48px;
+            object-fit: contain;
+        }
+
+        .activity-symbol-placeholder {
+            color: var(--text-light);
+            font-size: 1.8rem;
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+            display: none; /* Hidden by default in compact mode */
+        }
+
+        .activity-text {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+            word-break: break-word;
+        }
+
+        .activity-actions {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            display: flex;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: rgba(255,255,255,0.9);
+            border-radius: 6px;
+            padding: 2px;
+        }
+
+        .activity:hover .activity-actions {
+            opacity: 1;
+        }
+
+        /* Touch devices: always show actions */
+        @media (hover: none) {
+            .activity-actions {
+                opacity: 1;
+            }
+        }
+
+        .activity-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            box-shadow: 0 1px 3px var(--shadow);
+            transition: all 0.2s;
+        }
+
+        .activity-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .activity-btn.delete:hover {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .activity-btn.favorite:hover,
+        .activity-btn.favorite.active {
+            background: #FDF2F8;
+            color: var(--favorite);
+        }
+
+        /* Single day view - show text */
+        .days-1 .activity-content {
+            display: block;
+        }
+
+        .days-1 .activity-symbol {
+            width: 70px;
+            height: 70px;
+        }
+
+        .days-1 .activity-symbol img {
+            max-width: 60px;
+            max-height: 60px;
+        }
+
+        .days-1 .activity-time {
+            min-width: 60px;
+            font-size: 1.1rem;
+        }
+
+        .days-1 .activity-text {
+            font-size: 1.1rem;
+        }
+
+        /* 2-3 days - medium view */
+        .days-2 .activity-content,
+        .days-3 .activity-content {
+            display: block;
+        }
+
+        .days-2 .activity-text,
+        .days-3 .activity-text {
+            font-size: 0.9rem;
+        }
+
+        /* Add Activity Button */
+        .add-activity-btn {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-light);
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .add-activity-btn:hover {
+            border-color: var(--day);
+            color: var(--day-text);
+            background: var(--day-light);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--border);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #DC2626;
+            color: white;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-input {
+            width: 100%;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--day);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem;
+        }
+
+        /* Symbol Search */
+        .symbol-search-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .symbol-search-container .form-input {
+            flex: 1;
+        }
+
+        .search-btn {
+            padding: 0.8rem 1.2rem;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .symbol-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+            min-height: 100px;
+        }
+
+        .symbol-option {
+            aspect-ratio: 1;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .symbol-option:hover {
+            border-color: var(--day);
+            transform: scale(1.05);
+        }
+
+        .symbol-option.selected {
+            border-color: var(--day);
+            background: var(--day-light);
+            box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.3);
+        }
+
+        .symbol-option img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .symbol-loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+
+        .symbol-loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-top-color: var(--day);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 0.8rem 2rem;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-cancel {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        /* Favorites Panel */
+        .favorites-panel {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .favorites-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .favorites-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .favorites-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .favorite-item {
+            width: 70px;
+            height: 70px;
+            border-radius: var(--radius-sm);
+            background: white;
+            border: 2px solid var(--border);
+            cursor: grab;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            position: relative;
+            user-select: none;
+        }
+
+        .favorite-item:active {
+            cursor: grabbing;
+        }
+
+        .favorite-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .favorite-item:hover {
+            border-color: var(--favorite);
+            transform: scale(1.05);
+        }
+
+        .favorite-item img {
+            max-width: 45px;
+            max-height: 45px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .favorite-item span {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+            margin-top: 0.2rem;
+        }
+
+        .favorite-delete {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #EF4444;
+            color: white;
+            border: 2px solid white;
+            font-size: 12px;
+            line-height: 1;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .favorite-item:hover .favorite-delete {
+            display: flex;
+        }
+
+        .favorite-delete:hover {
+            background: #DC2626;
+            transform: scale(1.1);
+        }
+
+        .empty-favorites {
+            color: var(--text-light);
+            font-style: italic;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        /* Rules Panel */
+        .rules-panel {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .rules-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .rules-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .rule-item:hover {
+            border-color: var(--day);
+        }
+
+        .rule-symbol {
+            width: 45px;
+            height: 45px;
+            border-radius: var(--radius-sm);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .rule-symbol img {
+            max-width: 38px;
+            max-height: 38px;
+            object-fit: contain;
+        }
+
+        .rule-symbol.crossed::after {
+            content: '';
+            position: absolute;
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0;
+            background: linear-gradient(
+                to top right,
+                transparent 45%,
+                #DC2626 45%,
+                #DC2626 55%,
+                transparent 55%
+            );
+            border-radius: var(--radius-sm);
+        }
+
+        .rule-operator {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text);
+            padding: 0 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .rule-condition {
+            background: var(--day-light);
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            color: var(--day-text);
+            border: 1px solid var(--day);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .rule-actions {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            display: flex;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: rgba(255,255,255,0.9);
+            border-radius: 6px;
+            padding: 2px;
+        }
+
+        .rule-item:hover .rule-actions {
+            opacity: 1;
+        }
+
+        .rule-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            box-shadow: 0 1px 3px var(--shadow);
+            transition: all 0.2s;
+        }
+
+        .rule-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .rule-btn.delete:hover {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .rule-btn.edit:hover {
+            background: var(--day-light);
+            color: var(--day-text);
+        }
+
+        .empty-rules {
+            color: var(--text-light);
+            font-style: italic;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        /* Rule Builder Modal */
+        .rule-builder-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .rule-tools-section {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+        }
+
+        .rule-tools-section h4 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .operator-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .operator-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .operator-btn:hover {
+            border-color: var(--day);
+            background: var(--day-light);
+            transform: scale(1.05);
+        }
+
+        .condition-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .condition-btn {
+            padding: 0.5rem 0.75rem;
+            border: 2px solid var(--day);
+            border-radius: var(--radius-sm);
+            background: var(--day-light);
+            font-weight: 600;
+            color: var(--day-text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .condition-btn:hover {
+            background: var(--day);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .rule-preview {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+        }
+
+        .rule-preview .rule-item {
+            border-color: var(--day);
+            background: white;
+            margin: 0;
+        }
+
+        /* Day card copy button */
+        .day-copy-btn {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.3rem 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .day-copy-btn:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .day-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Print Header - only visible when printing */
+        .print-header {
+            display: none;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.4rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .controls {
+                padding: 1rem;
+            }
+
+            .days-container {
+                grid-template-columns: 1fr !important;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .activity {
+                flex-wrap: wrap;
+            }
+
+            .activity-symbol {
+                width: 60px;
+                height: 60px;
+            }
+
+            .activity-symbol img {
+                max-width: 50px;
+                max-height: 50px;
+            }
+
+            .activity-time {
+                min-width: 50px;
+                font-size: 1rem;
+            }
+
+            .symbol-results {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+        }
+
+        /* Status Messages */
+        .status-message {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            background: var(--text);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .status-message.success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+
+        .status-message.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Drag and Drop States */
+        .drag-over {
+            background: var(--day-light);
+            border: 2px dashed var(--day);
+        }
+
+        /* Synonyms display */
+        .search-synonyms {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg);
+            border-radius: 6px;
+        }
+
+        .search-synonyms strong {
+            color: var(--text);
+        }
+
+        .synonym-tag {
+            display: inline-block;
+            background: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin: 0.2rem;
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Export mode - hide UI elements */
+        body.export-mode .add-activity-btn,
+        body.export-mode .activity-actions,
+        body.export-mode .day-copy-btn,
+        body.export-mode .header,
+        body.export-mode .controls,
+        body.export-mode .favorites-panel,
+        body.export-mode .rules-actions,
+        body.export-mode .activity-symbol-actions {
+            display: none !important;
+        }
+
+        body.export-mode .activity-content,
+        body.export-mode .activity-text {
+            display: none !important;
+        }
+
+        body.export-mode .rules-panel {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+        }
+
+        body.export-mode .rule-item {
+            margin-bottom: 0.25rem;
+            padding: 0.5rem;
+        }
+
+        body.export-mode .rule-symbol {
+            width: 35px;
+            height: 35px;
+        }
+
+        body.export-mode .rule-symbol img {
+            max-width: 30px;
+            max-height: 30px;
+        }
+
+        body.export-mode .rule-operator {
+            font-size: 1.2rem;
+            padding: 0 0.15rem;
+        }
+
+        body.export-mode .rule-condition {
+            padding: 0.3rem 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        body.export-mode .main {
+            padding: 0.5rem; /* Minimal padding for export */
+        }
+
+        body.export-mode .print-header {
+            display: block !important;
+            margin-bottom: 0.5rem; /* Minimal margin */
+            padding-bottom: 0.25rem;
+        }
+
+        body.export-mode .print-header h1 {
+            font-size: 1.5rem; /* Smaller for more space */
+        }
+
+        body.export-mode .print-header .print-subtitle {
+            font-size: 0.9rem;
+        }
+
+        body.export-mode .days-container {
+            gap: 4px; /* Minimal gap between days */
+        }
+
+        body.export-mode .day-card {
+            box-shadow: none;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        body.export-mode .day-header {
+            padding: 0.3rem 0.4rem; /* Compact header */
+        }
+
+        body.export-mode .day-title {
+            font-size: 0.9rem;
+        }
+
+        body.export-mode .day-date {
+            font-size: 0.7rem;
+        }
+
+        body.export-mode .activities-list {
+            padding: 0.3rem; /* Minimal padding */
+        }
+
+        body.export-mode .activity-group {
+            margin-bottom: 3px;
+            padding: 3px;
+            border-radius: 4px;
+            min-height: 50px; /* Taller for grouped activities */
+        }
+
+        body.export-mode .activity-symbols-container {
+            gap: 2px;
+        }
+
+        body.export-mode .activity-symbol-small {
+            width: 35px; /* Slightly smaller in export mode */
+            height: 35px;
+        }
+
+        body.export-mode .activity-symbol-small img {
+            max-width: 30px;
+            max-height: 30px;
+        }
+
+        body.export-mode .activity {
+            justify-content: center; /* Center symbols when no text */
+        }
+
+        body.export-mode .activity-group {
+            justify-content: center; /* Center symbols when no text */
+        }
+
+        body.export-mode .activity-time {
+            width: 40px; /* Larger clock */
+            height: 40px;
+            min-width: 40px;
+        }
+
+        body.export-mode .clock-hand.hour {
+            width: 3px;
+            height: 12px;
+        }
+
+        body.export-mode .clock-hand.minute {
+            width: 2px;
+            height: 16px;
+        }
+
+        body.export-mode .clock-center {
+            width: 6px;
+            height: 6px;
+        }
+
+        body.export-mode .activity-symbol {
+            width: 60px; /* Much larger symbols */
+            height: 60px;
+            border: 1px solid #ddd;
+        }
+
+        body.export-mode .activity-symbol img {
+            max-width: 52px; /* Larger images */
+            max-height: 52px;
+        }
+
+        body.export-mode .activity-content {
+            flex: 1;
+            display: block !important;
+        }
+
+        body.export-mode .activity-text {
+            font-size: 0.9rem;
+        }
+
+        /* Schema selector styling */
+        #schemaSelector {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            padding-right: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">📅</span>
+                <span>Dagsplanerare</span>
+            </div>
+            <div class="header-actions">
+                <select class="btn btn-primary" id="schemaSelector" onchange="loadSelectedSchema()" style="min-width: 140px;">
+                    <option value="">-- Välj schema --</option>
+                </select>
+                <button class="btn btn-primary" onclick="saveSchemaAs()">
+                    💾 Spara som...
+                </button>
+                <button class="btn btn-secondary" onclick="exportAsImage()">
+                    🖼️ Dela bild
+                </button>
+                <button class="btn btn-secondary" onclick="deleteCurrentSchema()">
+                    🗑️ Ta bort
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main" id="mainContent">
+        <!-- Print header - only visible when printing -->
+        <div class="print-header" id="printHeader">
+            <h1 id="printTitle">Mitt Schema</h1>
+            <div class="print-subtitle" id="printSubtitle"></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label class="control-label">Antal dagar</label>
+                <select class="control-input" id="numDays" onchange="updateDays()">
+                    <option value="1">1 dag</option>
+                    <option value="2">2 dagar</option>
+                    <option value="3">3 dagar</option>
+                    <option value="4">4 dagar</option>
+                    <option value="5" selected>5 dagar</option>
+                    <option value="6">6 dagar</option>
+                    <option value="7">7 dagar (vecka)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Startdatum</label>
+                <input type="date" class="control-input" id="startDate" onchange="updateDays()">
+            </div>
+            <div class="control-group">
+                <label class="control-label">Schema namn</label>
+                <input type="text" class="control-input" id="scheduleName" placeholder="T.ex. Franks schema" value="Mitt schema" onchange="updatePrintHeader(new Date(document.getElementById('startDate').value), parseInt(document.getElementById('numDays').value))">
+            </div>
+        </div>
+
+        <div class="favorites-panel" id="favoritesPanel">
+            <div class="favorites-header">
+                <div class="favorites-title">
+                    ⭐ Favoritsymboler
+                </div>
+            </div>
+            <div class="favorites-grid" id="favoritesGrid">
+                <div class="empty-favorites">Klicka på ♡ på en aktivitet för att lägga till favoriter</div>
+            </div>
+        </div>
+
+        <div class="days-container days-5" id="daysContainer">
+            <!-- Days will be generated here -->
+        </div>
+
+        <!-- Rules Panel -->
+        <div class="rules-panel" id="rulesPanel">
+            <div class="rules-header">
+                <div class="rules-title">
+                    📋 Regler
+                </div>
+                <button class="btn btn-primary" onclick="openRuleModal()">
+                    ➕ Lägg till regel
+                </button>
+            </div>
+            <div class="rules-list" id="rulesList">
+                <div class="empty-rules">Klicka på "Lägg till regel" för att skapa villkor och regler</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Activity Modal -->
+    <div class="modal-overlay" id="activityModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Lägg till aktivitet</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tid</label>
+                        <input type="time" class="form-input" id="activityTime" value="08:00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Aktivitet</label>
+                        <input type="text" class="form-input" id="activityText" placeholder="T.ex. Frukost, Skola, Leka...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sök symbol</label>
+                    <div class="symbol-search-container">
+                        <input type="text" class="form-input" id="symbolSearch" placeholder="Skriv för att söka symboler...">
+                        <button class="search-btn" id="searchBtn" onclick="searchSymbols()">Sök</button>
+                    </div>
+                    <div class="search-synonyms" id="searchSynonyms" style="display: none;">
+                        <strong>🔍 Söker även:</strong> <span id="synonymsList"></span>
+                    </div>
+                    <div class="symbol-results" id="symbolResults">
+                        <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 2rem;">
+                            Skriv ett sökord och klicka "Sök" för att hitta symboler
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal()">Avbryt</button>
+                <button class="btn btn-save" onclick="saveActivity()">Spara</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rule Builder Modal -->
+    <div class="modal-overlay" id="ruleModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Bygg regel</h2>
+                <button class="modal-close" onclick="closeRuleModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">1. Välj symboler och operatörer</label>
+                    <div class="rule-builder-tools">
+                        <div class="rule-tools-section">
+                            <h4>Operatörer</h4>
+                            <div class="operator-buttons">
+                                <button class="operator-btn" onclick="addOperatorToRule('+')">+</button>
+                                <button class="operator-btn" onclick="addOperatorToRule('→')">→</button>
+                                <button class="operator-btn" onclick="addOperatorToRule('=')">=</button>
+                                <button class="operator-btn" onclick="addOperatorToRule('≠')">≠</button>
+                                <button class="operator-btn" onclick="addOperatorToRule('<')"><</button>
+                                <button class="operator-btn" onclick="addOperatorToRule('>')">></button>
+                                <button class="operator-btn" onclick="addOperatorToRule('≤')">≤</button>
+                                <button class="operator-btn" onclick="addOperatorToRule('≥')">≥</button>
+                            </div>
+                        </div>
+                        <div class="rule-tools-section">
+                            <h4>Villkor</h4>
+                            <div class="condition-buttons">
+                                <button class="condition-btn" onclick="addConditionToRule('< 15 min')">< 15 min</button>
+                                <button class="condition-btn" onclick="addConditionToRule('< 30 min')">< 30 min</button>
+                                <button class="condition-btn" onclick="addConditionToRule('< 1 timme')">< 1 timme</button>
+                                <button class="condition-btn" onclick="addConditionToRule('> 2 st')">> 2 st</button>
+                                <button class="condition-btn" onclick="addConditionToRule('= ja')">= ja</button>
+                                <button class="condition-btn" onclick="addConditionToRule('= nej')">= nej</button>
+                            </div>
+                        </div>
+                        <div class="rule-tools-section">
+                            <h4>Symboler</h4>
+                            <div class="symbol-search-container">
+                                <input type="text" class="form-input" id="ruleSymbolSearch" placeholder="Sök symboler...">
+                                <button class="search-btn" onclick="searchRuleSymbols()">Sök</button>
+                            </div>
+                            <div class="symbol-results" id="ruleSymbolResults">
+                                <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 1rem;">
+                                    Sök efter symboler att använda i regeln
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">2. Förhandsvisning</label>
+                    <div class="rule-preview" id="rulePreview">
+                        <div class="empty-rules">Lägg till element för att se regel-förhandsvisning</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeRuleModal()">Avbryt</button>
+                <button class="btn btn-save" onclick="saveRule()">Spara regel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let schedule = {
+            name: 'Mitt schema',
+            startDate: new Date().toISOString().split('T')[0],
+            numDays: 5,
+            days: {},
+            rules: [] // Add rules array for rebus-style rules
+        };
+        let favorites = [];
+        let currentDayId = null;
+        let currentActivityId = null;
+        let selectedSymbol = null;
+        
+        // Rule builder state
+        let currentRule = {
+            symbols: []
+        };
+
+        // Day names in Swedish
+        const dayNames = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+            document.getElementById('startDate').value = schedule.startDate;
+            document.getElementById('numDays').value = schedule.numDays;
+            document.getElementById('scheduleName').value = schedule.name;
+            updateDays();
+            renderFavorites();
+            renderRules();
+
+            // Enter key for search
+            document.getElementById('symbolSearch').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchSymbols();
+            });
+
+            // Auto-search when typing activity text
+            document.getElementById('activityText').addEventListener('input', debounce((e) => {
+                document.getElementById('symbolSearch').value = e.target.value;
+            }, 300));
+        });
+
+        // Debounce helper
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Get time period class
+        function getTimePeriod(time) {
+            const hour = parseInt(time.split(':')[0]);
+            if (hour >= 5 && hour < 12) return 'morning';
+            if (hour >= 12 && hour < 18) return 'day';
+            return 'evening';
+        }
+
+        // Update print header with schedule info
+        function updatePrintHeader(startDate, numDays) {
+            const scheduleName = document.getElementById('scheduleName').value || 'Mitt Schema';
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + numDays - 1);
+            
+            const formatDate = (d) => `${d.getDate()}/${d.getMonth() + 1}`;
+            const formatFullDate = (d) => `${d.getDate()}/${d.getMonth() + 1} ${d.getFullYear()}`;
+            
+            let subtitle = '';
+            if (numDays === 1) {
+                subtitle = `${dayNames[startDate.getDay()]} ${formatFullDate(startDate)}`;
+            } else if (numDays === 7) {
+                subtitle = `Vecka ${getWeekNumber(startDate)} • ${formatDate(startDate)} - ${formatFullDate(endDate)}`;
+            } else {
+                subtitle = `${formatDate(startDate)} - ${formatFullDate(endDate)}`;
+            }
+            
+            document.getElementById('printTitle').textContent = scheduleName;
+            document.getElementById('printSubtitle').textContent = subtitle;
+        }
+
+        // Get week number
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+
+        // Update days display
+        function updateDays() {
+            const numDays = parseInt(document.getElementById('numDays').value);
+            const startDate = new Date(document.getElementById('startDate').value);
+            schedule.numDays = numDays;
+            schedule.startDate = document.getElementById('startDate').value;
+            schedule.name = document.getElementById('scheduleName').value;
+
+            const container = document.getElementById('daysContainer');
+            container.className = `days-container days-${numDays}`;
+            container.innerHTML = '';
+
+            // Update print header
+            updatePrintHeader(startDate, numDays);
+
+            for (let i = 0; i < numDays; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                const dayId = date.toISOString().split('T')[0];
+                
+                // Calculate next day ID for copy function
+                const nextDate = new Date(date);
+                nextDate.setDate(nextDate.getDate() + 1);
+                const nextDayId = nextDate.toISOString().split('T')[0];
+                const isLastDay = i === numDays - 1;
+                
+                if (!schedule.days[dayId]) {
+                    schedule.days[dayId] = [];
+                }
+
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card';
+                dayCard.innerHTML = `
+                    <div class="day-header">
+                        <span class="day-title">${dayNames[date.getDay()]}</span>
+                        <div class="day-header-actions">
+                            ${!isLastDay ? `<button class="day-copy-btn" onclick="copyDayToNext('${dayId}', '${nextDayId}')" title="Kopiera och ersätt nästa dag">📋→</button>` : ''}
+                            <span class="day-date">${date.getDate()}/${date.getMonth() + 1}</span>
+                        </div>
+                    </div>
+                    <div class="activities-list" id="activities-${dayId}" 
+                         ondrop="handleDrop(event, '${dayId}')" 
+                         ondragover="handleDragOver(event)"
+                         ondragleave="handleDragLeave(event)">
+                        ${renderActivities(dayId)}
+                    </div>
+                `;
+                container.appendChild(dayCard);
+            }
+
+            saveToStorage();
+        }
+
+        // Group activities by time
+        function groupActivitiesByTime(activities) {
+            const grouped = {};
+            activities.forEach(activity => {
+                const time = activity.time;
+                if (!grouped[time]) {
+                    grouped[time] = [];
+                }
+                grouped[time].push(activity);
+            });
+            return grouped;
+        }
+
+        // Render activities for a day
+        function renderActivities(dayId) {
+            const activities = schedule.days[dayId] || [];
+            
+            // Group activities by time
+            const groupedActivities = groupActivitiesByTime(activities);
+            
+            let html = '';
+            
+            Object.keys(groupedActivities).forEach(time => {
+                const activitiesAtTime = groupedActivities[time];
+                const period = getTimePeriod(time);
+                
+                if (activitiesAtTime.length === 1) {
+                    // Single activity - render normally
+                    const activity = activitiesAtTime[0];
+                    const index = activities.indexOf(activity);
+                    html += `
+                        <div class="activity ${period}" 
+                             draggable="true"
+                             ondragstart="handleDragStart(event, '${dayId}', ${index})"
+                             ondragend="handleDragEnd(event)"
+                             title="${activity.time} - ${activity.text}">
+                            <div class="activity-time">
+                                ${renderAnalogClock(activity.time)}
+                            </div>
+                            <div class="activity-symbol">
+                                ${activity.symbol 
+                                    ? `<img src="${activity.symbol}" alt="${activity.text}">`
+                                    : '<span class="activity-symbol-placeholder">📌</span>'
+                                }
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-text">${activity.text}</div>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="activity-btn favorite ${isFavorite(activity) ? 'active' : ''}" 
+                                        onclick="toggleFavorite('${dayId}', ${index})" title="Lägg till favorit">
+                                    ${isFavorite(activity) ? '♥' : '♡'}
+                                </button>
+                                <button class="activity-btn" onclick="editActivity('${dayId}', ${index})" title="Redigera">
+                                    ✏️
+                                </button>
+                                <button class="activity-btn delete" onclick="deleteActivity('${dayId}', ${index})" title="Ta bort">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Multiple activities at same time - render as grouped
+                    html += `
+                        <div class="activity-group ${period}" title="${time} - ${activitiesAtTime.map(a => a.text).join(', ')}">
+                            <div class="activity-time">
+                                ${renderAnalogClock(time)}
+                            </div>
+                            <div class="activity-symbols-container">
+                                ${activitiesAtTime.map(activity => {
+                                    const index = activities.indexOf(activity);
+                                    return `
+                                        <div class="activity-symbol-small-wrapper">
+                                            <div class="activity-symbol-small">
+                                                ${activity.symbol 
+                                                    ? `<img src="${activity.symbol}" alt="${activity.text}" title="${activity.text}">`
+                                                    : '<span class="activity-symbol-placeholder">📌</span>'
+                                                }
+                                            </div>
+                                            <div class="activity-symbol-actions">
+                                                <button class="activity-symbol-btn edit" onclick="editActivity('${dayId}', ${index})" title="Redigera ${activity.text}">
+                                                    ✏️
+                                                </button>
+                                                <button class="activity-symbol-btn delete" onclick="deleteActivity('${dayId}', ${index})" title="Ta bort ${activity.text}">
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-text">${activitiesAtTime.map(a => a.text).join(' + ')}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += `
+                <button class="add-activity-btn" onclick="openModal('${dayId}')">
+                    ➕ Lägg till aktivitet
+                </button>
+            `;
+
+            return html;
+        }
+
+        // Render analog clock SVG
+        function renderAnalogClock(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            const hourAngle = ((hours % 12) + minutes / 60) * 30; // 30 degrees per hour
+            const minuteAngle = minutes * 6; // 6 degrees per minute
+            
+            return `
+                <div class="clock-hand hour" style="transform: rotate(${hourAngle}deg)"></div>
+                <div class="clock-hand minute" style="transform: rotate(${minuteAngle}deg)"></div>
+                <div class="clock-center"></div>
+            `;
+        }
+
+        // Modal functions
+        function openModal(dayId, activityIndex = null) {
+            currentDayId = dayId;
+            currentActivityId = activityIndex;
+            selectedSymbol = null;
+
+            const modal = document.getElementById('activityModal');
+            const title = document.getElementById('modalTitle');
+            const timeInput = document.getElementById('activityTime');
+            const textInput = document.getElementById('activityText');
+            const searchInput = document.getElementById('symbolSearch');
+            const resultsContainer = document.getElementById('symbolResults');
+
+            if (activityIndex !== null) {
+                // Edit mode
+                const activity = schedule.days[dayId][activityIndex];
+                title.textContent = 'Redigera aktivitet';
+                timeInput.value = activity.time;
+                textInput.value = activity.text;
+                searchInput.value = activity.text;
+                selectedSymbol = activity.symbol;
+                
+                if (activity.symbol) {
+                    resultsContainer.innerHTML = `
+                        <div class="symbol-option selected">
+                            <img src="${activity.symbol}" alt="Vald symbol">
+                        </div>
+                    `;
+                }
+            } else {
+                // Add mode
+                title.textContent = 'Lägg till aktivitet';
+                timeInput.value = '08:00';
+                textInput.value = '';
+                searchInput.value = '';
+                resultsContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 2rem;">
+                        Skriv ett sökord och klicka "Sök" för att hitta symboler
+                    </div>
+                `;
+            }
+
+            modal.classList.add('active');
+            textInput.focus();
+        }
+
+        function closeModal() {
+            document.getElementById('activityModal').classList.remove('active');
+            currentDayId = null;
+            currentActivityId = null;
+            selectedSymbol = null;
+        }
+
+        // OpenSymbols API configuration
+        // The proxy server handles authentication securely
+        const OPENSYMBOLS_PROXY = 'http://localhost:3001/api/symbols';
+        const SYMBOTALK_API = 'https://symbotalkapiv1.azurewebsites.net';
+        
+        // Common Swedish to English translations for activities
+        const sweToEngDict = {
+            'vakna': 'wake up',
+            'väcka': 'wake up',
+            'stiga upp': 'wake up',
+            'frukost': 'breakfast',
+            'äta frukost': 'breakfast',
+            'morgonmat': 'breakfast',
+            'lunch': 'lunch',
+            'middag': 'dinner',
+            'mat': 'food',
+            'äta': 'eat',
+            'dricka': 'drink',
+            'vatten': 'water',
+            'mjölk': 'milk',
+            'juice': 'juice',
+            'skola': 'school',
+            'förskola': 'preschool',
+            'dagis': 'daycare',
+            'leka': 'play',
+            'spela': 'play',
+            'rita': 'draw',
+            'måla': 'paint',
+            'läsa': 'read',
+            'bok': 'book',
+            'tv': 'television',
+            'titta på tv': 'watch tv',
+            'dator': 'computer',
+            'surfplatta': 'tablet',
+            'ipad': 'tablet',
+            'telefon': 'phone',
+            'sova': 'sleep',
+            'vila': 'rest',
+            'sovdags': 'bedtime',
+            'läggdags': 'bedtime',
+            'god natt': 'goodnight',
+            'borsta tänderna': 'brush teeth',
+            'tvätta': 'wash',
+            'duscha': 'shower',
+            'bada': 'bath',
+            'klä på': 'get dressed',
+            'kläder': 'clothes',
+            'gå ut': 'go outside',
+            'promenad': 'walk',
+            'cykla': 'bicycle',
+            'bil': 'car',
+            'buss': 'bus',
+            'hemma': 'home',
+            'hem': 'home',
+            'mamma': 'mother',
+            'pappa': 'father',
+            'familj': 'family',
+            'vänner': 'friends',
+            'kompis': 'friend',
+            'mellanmål': 'snack',
+            'fika': 'coffee break',
+            'godis': 'candy',
+            'frukt': 'fruit',
+            'äpple': 'apple',
+            'banan': 'banana',
+            'musik': 'music',
+            'sjunga': 'sing',
+            'dansa': 'dance',
+            'springa': 'run',
+            'hoppa': 'jump',
+            'klättra': 'climb',
+            'simma': 'swim',
+            'fotboll': 'soccer',
+            'leksaker': 'toys',
+            'docka': 'doll',
+            'bil': 'car',
+            'tåg': 'train',
+            'djur': 'animal',
+            'hund': 'dog',
+            'katt': 'cat',
+            'glad': 'happy',
+            'ledsen': 'sad',
+            'arg': 'angry',
+            'trött': 'tired',
+            'hungrig': 'hungry',
+            'törstig': 'thirsty',
+            'toalett': 'toilet',
+            'kiss': 'toilet',
+            'bajsa': 'toilet',
+            'blöja': 'diaper',
+            'tandborste': 'toothbrush',
+            'pyjamas': 'pajamas',
+            'träning': 'exercise',
+            'gymnastik': 'gymnastics',
+            'läxor': 'homework',
+            'städa': 'clean',
+            'hjälpa': 'help',
+            'vänta': 'wait',
+            'färdig': 'finished',
+            'slut': 'end',
+            'börja': 'start',
+            'kram': 'hug',
+            'puss': 'kiss'
+        };
+
+        // Translate Swedish to English
+        function translateToEnglish(text) {
+            const lower = text.toLowerCase().trim();
+            
+            // Direct match
+            if (sweToEngDict[lower]) {
+                return [sweToEngDict[lower], lower];
+            }
+            
+            // Try to find partial matches
+            const matches = [];
+            for (const [swe, eng] of Object.entries(sweToEngDict)) {
+                if (lower.includes(swe) || swe.includes(lower)) {
+                    matches.push(eng);
+                }
+            }
+            
+            if (matches.length > 0) {
+                return [...new Set(matches), lower];
+            }
+            
+            // Return original if no translation found
+            return [lower];
+        }
+
+        // Search symbols - tries OpenSymbols proxy first, then SymboTalk as fallback
+        async function searchSymbols() {
+            const searchInput = document.getElementById('symbolSearch');
+            const resultsContainer = document.getElementById('symbolResults');
+            const synonymsContainer = document.getElementById('searchSynonyms');
+            const synonymsList = document.getElementById('synonymsList');
+            const searchBtn = document.getElementById('searchBtn');
+            const query = searchInput.value.trim();
+
+            if (!query) {
+                showStatus('Skriv ett sökord först', 'error');
+                return;
+            }
+
+            searchBtn.disabled = true;
+            resultsContainer.innerHTML = '<div class="symbol-loading">Söker symboler</div>';
+            synonymsContainer.style.display = 'none';
+
+            try {
+                let searchTerms = [];
+                let usedLLM = false;
+                
+                // Try to get enhanced search terms from local LLM
+                try {
+                    const llmResponse = await fetch('http://localhost:8081/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: 'local-model',
+                            messages: [{
+                                role: 'user',
+                                content: `Given the activity or concept "${query}" (which may be in Swedish or another language), provide 5 simple English search terms that could be used to find visual symbols representing this activity for a children's daily schedule. Include: the English translation, synonyms, and related visual concepts. Return ONLY a JSON array of lowercase strings, no explanation. Example: ["breakfast", "eating", "food", "morning meal", "cereal"]`
+                            }],
+                            temperature: 0.7,
+                            max_tokens: 100
+                        }),
+                        signal: AbortSignal.timeout(5000)
+                    });
+
+                    if (llmResponse.ok) {
+                        const llmData = await llmResponse.json();
+                        const content = llmData.choices?.[0]?.message?.content || '';
+                        const match = content.match(/\[.*\]/s);
+                        if (match) {
+                            const terms = JSON.parse(match[0]);
+                            if (Array.isArray(terms) && terms.length > 0) {
+                                searchTerms = terms.map(t => t.toLowerCase());
+                                usedLLM = true;
+                                console.log('LLM provided search terms:', searchTerms);
+                            }
+                        }
+                    }
+                } catch (llmError) {
+                    console.log('LLM not available, using built-in translation');
+                }
+
+                // Fallback to built-in translation if LLM not available
+                if (!usedLLM || searchTerms.length === 0) {
+                    searchTerms = translateToEnglish(query);
+                    console.log('Using built-in translation:', searchTerms);
+                }
+
+                // Display synonyms/search terms
+                if (searchTerms.length > 0) {
+                    synonymsList.innerHTML = searchTerms.map(term => 
+                        `<span class="synonym-tag">${term}</span>`
+                    ).join('');
+                    synonymsContainer.style.display = 'block';
+                }
+
+                const allSymbols = [];
+                const seenUrls = new Set();
+                let usedOpenSymbols = false;
+
+                // Try OpenSymbols proxy first (has 60,000+ symbols)
+                try {
+                    // Search Swedish first
+                    const svResponse = await fetch(
+                        `${OPENSYMBOLS_PROXY}?q=${encodeURIComponent(query)}&locale=sv`,
+                        { signal: AbortSignal.timeout(5000) }
+                    );
+                    
+                    if (svResponse.ok) {
+                        const symbols = await svResponse.json();
+                        if (Array.isArray(symbols)) {
+                            usedOpenSymbols = true;
+                            for (const symbol of symbols.slice(0, 8)) {
+                                if (symbol.image_url && !seenUrls.has(symbol.image_url)) {
+                                    seenUrls.add(symbol.image_url);
+                                    allSymbols.push({
+                                        image_url: symbol.image_url,
+                                        name: symbol.name,
+                                        source: 'opensymbols'
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    // Search with English terms
+                    for (const term of searchTerms.slice(0, 2)) {
+                        if (allSymbols.length >= 12) break;
+                        
+                        const enResponse = await fetch(
+                            `${OPENSYMBOLS_PROXY}?q=${encodeURIComponent(term)}&locale=en`,
+                            { signal: AbortSignal.timeout(3000) }
+                        );
+                        
+                        if (enResponse.ok) {
+                            const symbols = await enResponse.json();
+                            if (Array.isArray(symbols)) {
+                                for (const symbol of symbols.slice(0, 6)) {
+                                    if (symbol.image_url && !seenUrls.has(symbol.image_url)) {
+                                        seenUrls.add(symbol.image_url);
+                                        allSymbols.push({
+                                            image_url: symbol.image_url,
+                                            name: symbol.name,
+                                            source: 'opensymbols'
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (usedOpenSymbols && allSymbols.length > 0) {
+                        console.log('OpenSymbols proxy returned', allSymbols.length, 'results');
+                    }
+                } catch (proxyError) {
+                    console.log('OpenSymbols proxy not available, using SymboTalk fallback');
+                }
+
+                // Fallback to SymboTalk API if OpenSymbols proxy didn't work or returned few results
+                if (allSymbols.length < 6) {
+                    try {
+                        // Swedish search
+                        const svResponse = await fetch(
+                            `${SYMBOTALK_API}/search/?name=${encodeURIComponent(query)}&lang=sv&repo=all&limit=10`
+                        );
+                        if (svResponse.ok) {
+                            const symbols = await svResponse.json();
+                            for (const symbol of symbols) {
+                                if (symbol.image_url && !seenUrls.has(symbol.image_url)) {
+                                    seenUrls.add(symbol.image_url);
+                                    allSymbols.push({
+                                        image_url: symbol.image_url,
+                                        alt_url: symbol.alt_url,
+                                        name: symbol.name,
+                                        source: 'symbotalk'
+                                    });
+                                }
+                            }
+                        }
+
+                        // English search with translated terms
+                        for (const term of searchTerms.slice(0, 3)) {
+                            if (allSymbols.length >= 12) break;
+                            
+                            const response = await fetch(
+                                `${SYMBOTALK_API}/search/?name=${encodeURIComponent(term)}&lang=en&repo=all&limit=8`
+                            );
+                            
+                            if (response.ok) {
+                                const symbols = await response.json();
+                                for (const symbol of symbols) {
+                                    if (symbol.image_url && !seenUrls.has(symbol.image_url)) {
+                                        seenUrls.add(symbol.image_url);
+                                        allSymbols.push({
+                                            image_url: symbol.image_url,
+                                            alt_url: symbol.alt_url,
+                                            name: symbol.name,
+                                            source: 'symbotalk'
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.log('SymboTalk search failed:', e);
+                    }
+                }
+
+                if (allSymbols.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 2rem;">
+                            Inga symboler hittades för "${query}".<br>
+                            <small>Prova ett enklare ord eller på engelska.</small>
+                        </div>
+                    `;
+                } else {
+                    resultsContainer.innerHTML = allSymbols.slice(0, 12).map(symbol => {
+                        const imgUrl = symbol.image_url;
+                        const altUrl = symbol.alt_url || '';
+                        const escapedUrl = imgUrl.replace(/'/g, "\\'");
+                        const escapedAltUrl = altUrl.replace(/'/g, "\\'");
+                        return `
+                            <div class="symbol-option ${selectedSymbol === imgUrl ? 'selected' : ''}" 
+                                 onclick="selectSymbol('${escapedUrl}', this)"
+                                 title="${symbol.name || ''}">
+                                <img src="${imgUrl}" alt="${symbol.name || 'Symbol'}" 
+                                     onerror="this.onerror=null; if('${escapedAltUrl}') this.src='${escapedAltUrl}'; else this.parentElement.style.display='none';">
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    const sourceInfo = usedOpenSymbols ? 'OpenSymbols' : 'SymboTalk';
+                    showStatus(`Hittade ${allSymbols.length} symboler (${sourceInfo})`, 'success');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                resultsContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 2rem;">
+                        Kunde inte söka symboler.<br>
+                        <small>Kontrollera din internetanslutning.</small>
+                    </div>
+                `;
+            }
+
+            searchBtn.disabled = false;
+        }
+
+        function selectSymbol(url, element) {
+            document.querySelectorAll('.symbol-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedSymbol = url;
+        }
+
+        // Save activity
+        function saveActivity() {
+            const time = document.getElementById('activityTime').value;
+            const text = document.getElementById('activityText').value.trim();
+
+            if (!text) {
+                showStatus('Ange en aktivitet', 'error');
+                return;
+            }
+
+            const activity = {
+                time,
+                text,
+                symbol: selectedSymbol,
+                id: Date.now()
+            };
+
+            if (currentActivityId !== null) {
+                // Edit existing
+                schedule.days[currentDayId][currentActivityId] = {
+                    ...schedule.days[currentDayId][currentActivityId],
+                    ...activity
+                };
+            } else {
+                // Add new
+                schedule.days[currentDayId].push(activity);
+            }
+
+            // Sort by time
+            schedule.days[currentDayId].sort((a, b) => a.time.localeCompare(b.time));
+
+            closeModal();
+            updateDays();
+            showStatus('Aktivitet sparad!', 'success');
+        }
+
+        // Edit activity
+        function editActivity(dayId, index) {
+            openModal(dayId, index);
+        }
+
+        // Delete activity
+        function deleteActivity(dayId, index) {
+            schedule.days[dayId].splice(index, 1);
+            updateDays();
+            showStatus('Aktivitet borttagen', 'success');
+        }
+
+        // Favorites
+        function isFavorite(activity) {
+            return favorites.some(f => f.text === activity.text && f.symbol === activity.symbol);
+        }
+
+        function toggleFavorite(dayId, index) {
+            const activity = schedule.days[dayId][index];
+            const existingIndex = favorites.findIndex(f => f.text === activity.text && f.symbol === activity.symbol);
+
+            if (existingIndex >= 0) {
+                favorites.splice(existingIndex, 1);
+            } else {
+                favorites.push({
+                    text: activity.text,
+                    symbol: activity.symbol,
+                    time: activity.time
+                });
+            }
+
+            saveToStorage();
+            updateDays();
+            renderFavorites();
+        }
+
+        function renderFavorites() {
+            const grid = document.getElementById('favoritesGrid');
+            
+            if (favorites.length === 0) {
+                grid.innerHTML = '<div class="empty-favorites">Klicka på ♡ på en aktivitet för att spara favoriter. Dra favoriter till en dag för att lägga till.</div>';
+                return;
+            }
+
+            grid.innerHTML = favorites.map((fav, index) => `
+                <div class="favorite-item" 
+                     draggable="true"
+                     ondragstart="handleFavoriteDragStart(event, ${index})"
+                     ondragend="handleFavoriteDragEnd(event)"
+                     title="${fav.text} - dra till en dag">
+                    <button class="favorite-delete" onclick="event.stopPropagation(); removeFavorite(${index})" title="Ta bort favorit">✕</button>
+                    ${fav.symbol 
+                        ? `<img src="${fav.symbol}" alt="${fav.text}">`
+                        : '<span style="font-size: 1.5rem;">📌</span>'
+                    }
+                    <span>${fav.text}</span>
+                </div>
+            `).join('');
+        }
+
+        // Favorite drag handlers
+        let draggedFavoriteIndex = null;
+
+        function handleFavoriteDragStart(event, index) {
+            draggedFavoriteIndex = index;
+            event.target.classList.add('dragging');
+            event.dataTransfer.effectAllowed = 'copy';
+            event.dataTransfer.setData('text/plain', 'favorite');
+        }
+
+        function handleFavoriteDragEnd(event) {
+            event.target.classList.remove('dragging');
+            draggedFavoriteIndex = null;
+        }
+
+        function removeFavorite(index) {
+            favorites.splice(index, 1);
+            saveToStorage();
+            renderFavorites();
+            showStatus('Favorit borttagen', 'success');
+        }
+
+        // Rules functions
+        function renderRules() {
+            const rulesList = document.getElementById('rulesList');
+            const rules = schedule.rules || [];
+            
+            if (rules.length === 0) {
+                rulesList.innerHTML = '<div class="empty-rules">Klicka på "Lägg till regel" för att skapa villkor och regler</div>';
+                return;
+            }
+
+            rulesList.innerHTML = rules.map((rule, index) => `
+                <div class="rule-item" title="Regel ${index + 1}">
+                    ${rule.symbols.map(symbol => {
+                        if (symbol.type === 'symbol') {
+                            return `
+                                <div class="rule-symbol ${symbol.crossed ? 'crossed' : ''}">
+                                    ${symbol.url 
+                                        ? `<img src="${symbol.url}" alt="${symbol.label || 'Symbol'}">`
+                                        : '<span style="font-size: 1.5rem;">📌</span>'
+                                    }
+                                </div>
+                            `;
+                        } else if (symbol.type === 'operator') {
+                            return `<div class="rule-operator">${symbol.value}</div>`;
+                        } else if (symbol.type === 'condition') {
+                            return `<div class="rule-condition">${symbol.value}</div>`;
+                        }
+                        return '';
+                    }).join('')}
+                    <div class="rule-actions">
+                        <button class="rule-btn edit" onclick="editRule(${index})" title="Redigera regel">
+                            ✏️
+                        </button>
+                        <button class="rule-btn delete" onclick="deleteRule(${index})" title="Ta bort regel">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addRule(rule) {
+            if (!schedule.rules) {
+                schedule.rules = [];
+            }
+            schedule.rules.push(rule);
+            saveToStorage();
+            renderRules();
+            showStatus('Regel tillagd', 'success');
+        }
+
+        function deleteRule(index) {
+            schedule.rules.splice(index, 1);
+            saveToStorage();
+            renderRules();
+            showStatus('Regel borttagen', 'success');
+        }
+
+        function editRule(index) {
+            const rule = schedule.rules[index];
+            // TODO: Implement edit functionality when modal is ready
+            showStatus('Redigera regel kommer snart', 'success');
+        }
+
+        // Rule builder functions
+        function openRuleModal() {
+            currentRule = { symbols: [] };
+            document.getElementById('ruleModal').classList.add('active');
+            updateRulePreview();
+        }
+
+        function closeRuleModal() {
+            document.getElementById('ruleModal').classList.remove('active');
+            currentRule = { symbols: [] };
+        }
+
+        function addOperatorToRule(operator) {
+            currentRule.symbols.push({
+                type: 'operator',
+                value: operator
+            });
+            updateRulePreview();
+        }
+
+        function addConditionToRule(condition) {
+            currentRule.symbols.push({
+                type: 'condition',
+                value: condition
+            });
+            updateRulePreview();
+        }
+
+        function addSymbolToRule(symbolUrl, symbolLabel) {
+            currentRule.symbols.push({
+                type: 'symbol',
+                url: symbolUrl,
+                label: symbolLabel,
+                crossed: false
+            });
+            updateRulePreview();
+        }
+
+        function updateRulePreview() {
+            const preview = document.getElementById('rulePreview');
+            
+            if (currentRule.symbols.length === 0) {
+                preview.innerHTML = '<div class="empty-rules">Lägg till element för att se regel-förhandsvisning</div>';
+                return;
+            }
+
+            preview.innerHTML = `
+                <div class="rule-item">
+                    ${currentRule.symbols.map(symbol => {
+                        if (symbol.type === 'symbol') {
+                            return `
+                                <div class="rule-symbol ${symbol.crossed ? 'crossed' : ''}">
+                                    ${symbol.url 
+                                        ? `<img src="${symbol.url}" alt="${symbol.label || 'Symbol'}">`
+                                        : '<span style="font-size: 1.5rem;">📌</span>'
+                                    }
+                                </div>
+                            `;
+                        } else if (symbol.type === 'operator') {
+                            return `<div class="rule-operator">${symbol.value}</div>`;
+                        } else if (symbol.type === 'condition') {
+                            return `<div class="rule-condition">${symbol.value}</div>`;
+                        }
+                        return '';
+                    }).join('')}
+                    <button class="rule-btn delete" onclick="clearRule()" title="Rensa regel" style="position: relative; opacity: 1;">
+                        🗑️
+                    </button>
+                </div>
+            `;
+        }
+
+        function clearRule() {
+            currentRule = { symbols: [] };
+            updateRulePreview();
+        }
+
+        function saveRule() {
+            if (currentRule.symbols.length === 0) {
+                showStatus('Regeln får inte vara tom', 'error');
+                return;
+            }
+
+            addRule({
+                id: 'rule_' + Date.now(),
+                symbols: [...currentRule.symbols]
+            });
+            
+            closeRuleModal();
+        }
+
+        function searchRuleSymbols() {
+            const query = document.getElementById('ruleSymbolSearch').value.trim();
+            const resultsContainer = document.getElementById('ruleSymbolResults');
+            
+            if (!query) {
+                resultsContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 1rem;">
+                        Skriv ett sökord för att hitta symboler
+                    </div>
+                `;
+                return;
+            }
+
+            // Show loading
+            resultsContainer.innerHTML = '<div class="symbol-loading">Söker symboler...</div>';
+
+            // Translate to English first
+            const searchTerms = translateToEnglish(query);
+            
+            // Try SymboTalk first (Swedish)
+            searchSymbotalkSymbols(query)
+                .then(symbols => {
+                    if (symbols.length > 0) {
+                        displayRuleSymbolResults(symbols);
+                    } else if (searchTerms.length > 0) {
+                        // Fallback to English search with OpenSymbols
+                        return searchEnglishTerms(searchTerms);
+                    } else {
+                        displayNoRuleSymbolsFound();
+                    }
+                })
+                .catch(() => {
+                    if (searchTerms.length > 0) {
+                        return searchEnglishTerms(searchTerms);
+                    } else {
+                        displayNoRuleSymbolsFound();
+                    }
+                })
+                .catch(error => {
+                    console.error('Rule symbol search error:', error);
+                    displayNoRuleSymbolsFound();
+                });
+        }
+
+        function searchEnglishTerms(searchTerms) {
+            // Try first term with OpenSymbols
+            return searchOpenSymbols(searchTerms[0], 'en')
+                .then(symbols => {
+                    if (symbols.length > 0) {
+                        displayRuleSymbolResults(symbols);
+                    } else {
+                        displayNoRuleSymbolsFound();
+                    }
+                });
+        }
+
+        function displayRuleSymbolResults(symbols) {
+            const resultsContainer = document.getElementById('ruleSymbolResults');
+            
+            // Show first 12 symbols
+            const displaySymbols = symbols.slice(0, 12);
+            
+            resultsContainer.innerHTML = displaySymbols.map((symbol, index) => `
+                <div class="symbol-option" onclick="addSymbolToRule('${symbol.url}', '${symbol.text || 'Symbol'}')">
+                    <img src="${symbol.url}" alt="${symbol.text || 'Symbol'}">
+                </div>
+            `).join('');
+        }
+
+        function displayNoRuleSymbolsFound() {
+            const resultsContainer = document.getElementById('ruleSymbolResults');
+            resultsContainer.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 1rem;">
+                    Inga symboler hittades. Prova ett annat sökord.
+                </div>
+            `;
+        }
+
+        // Helper function to search OpenSymbols (reuse from existing code)
+        function searchOpenSymbols(query, locale = 'en', safe = '1') {
+            const searchUrl = `${OPENSYMBOLS_PROXY}?q=${encodeURIComponent(query)}&locale=${locale}&safe=${safe}`;
+            
+            return fetch(searchUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Transform data to match expected format
+                    if (Array.isArray(data)) {
+                        return data.map(symbol => ({
+                            url: symbol.image_url || symbol.url,
+                            text: symbol.text || symbol.label || '',
+                            id: symbol.id
+                        })).filter(symbol => symbol.url);
+                    }
+                    return [];
+                })
+                .catch(error => {
+                    console.error('OpenSymbols search error:', error);
+                    return [];
+                });
+        }
+
+        // Helper function to search SymboTalk (reuse from existing code)
+        function searchSymbotalkSymbols(query) {
+            const searchUrl = `${SYMBOTALK_API}/api/symbols/search?q=${encodeURIComponent(query)}&limit=20`;
+            
+            return fetch(searchUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Transform data to match expected format
+                    if (Array.isArray(data)) {
+                        return data.map(symbol => ({
+                            url: symbol.image_url || symbol.url,
+                            text: symbol.text || symbol.label || '',
+                            id: symbol.id
+                        })).filter(symbol => symbol.url);
+                    }
+                    return [];
+                })
+                .catch(error => {
+                    console.error('SymboTalk search error:', error);
+                    return [];
+                });
+        }
+
+        function useFavorite(index) {
+            const fav = favorites[index];
+            // Find first visible day and add there
+            const firstDayId = Object.keys(schedule.days)[0];
+            if (firstDayId) {
+                openModal(firstDayId);
+                document.getElementById('activityText').value = fav.text;
+                document.getElementById('activityTime').value = fav.time || '08:00';
+                document.getElementById('symbolSearch').value = fav.text;
+                selectedSymbol = fav.symbol;
+                
+                if (fav.symbol) {
+                    document.getElementById('symbolResults').innerHTML = `
+                        <div class="symbol-option selected">
+                            <img src="${fav.symbol}" alt="Vald symbol">
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Copy day's activities to next day (replace)
+        function copyDayToNext(sourceDayId, targetDayId) {
+            const sourceActivities = schedule.days[sourceDayId] || [];
+            
+            if (sourceActivities.length === 0) {
+                showStatus('Inga aktiviteter att kopiera', 'error');
+                return;
+            }
+
+            // Deep copy activities (with new IDs)
+            const copiedActivities = sourceActivities.map(activity => ({
+                ...activity,
+                id: Date.now() + Math.random()
+            }));
+
+            // REPLACE target day activities (not add)
+            schedule.days[targetDayId] = copiedActivities;
+            schedule.days[targetDayId].sort((a, b) => a.time.localeCompare(b.time));
+
+            saveToStorage();
+            updateDays();
+            renderFavorites();
+            showStatus(`Dag kopierad och ersatt`, 'success');
+        }
+
+        // Drag and Drop
+        let dragData = null;
+
+        function handleDragStart(event, dayId, index) {
+            dragData = { dayId, index };
+            event.target.classList.add('dragging');
+            event.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(event) {
+            event.target.classList.remove('dragging');
+            document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(event, targetDayId) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+
+            // Check if dropping a favorite
+            if (draggedFavoriteIndex !== null) {
+                const fav = favorites[draggedFavoriteIndex];
+                
+                // Open modal to set time for the favorite
+                currentDayId = targetDayId;
+                currentActivityId = null;
+                selectedSymbol = fav.symbol;
+                
+                const modal = document.getElementById('activityModal');
+                document.getElementById('modalTitle').textContent = 'Lägg till från favorit';
+                document.getElementById('activityTime').value = fav.time || '08:00';
+                document.getElementById('activityText').value = fav.text;
+                document.getElementById('symbolSearch').value = fav.text;
+                
+                if (fav.symbol) {
+                    document.getElementById('symbolResults').innerHTML = `
+                        <div class="symbol-option selected">
+                            <img src="${fav.symbol}" alt="Vald symbol">
+                        </div>
+                    `;
+                }
+                
+                modal.classList.add('active');
+                document.getElementById('activityTime').focus();
+                
+                draggedFavoriteIndex = null;
+                showStatus('Ställ in tid för aktiviteten', 'success');
+                return;
+            }
+
+            if (!dragData) return;
+
+            const activity = schedule.days[dragData.dayId][dragData.index];
+            
+            // Remove from source
+            schedule.days[dragData.dayId].splice(dragData.index, 1);
+            
+            // Add to target
+            if (!schedule.days[targetDayId]) {
+                schedule.days[targetDayId] = [];
+            }
+            schedule.days[targetDayId].push(activity);
+            
+            // Sort by time
+            schedule.days[targetDayId].sort((a, b) => a.time.localeCompare(b.time));
+
+            dragData = null;
+            updateDays();
+            showStatus('Aktivitet flyttad!', 'success');
+        }
+
+        // Storage - Multi-schema support
+        let currentSchemaId = null;
+
+        function saveToStorage() {
+            // Auto-save current schema if it has an ID
+            if (currentSchemaId) {
+                const schemas = getAllSchemas();
+                schemas[currentSchemaId] = { ...schedule, id: currentSchemaId };
+                localStorage.setItem('dagsplanerare_schemas', JSON.stringify(schemas));
+            }
+            localStorage.setItem('dagsplanerare_favorites', JSON.stringify(favorites));
+            localStorage.setItem('dagsplanerare_current', currentSchemaId || '');
+        }
+
+        function getAllSchemas() {
+            try {
+                return JSON.parse(localStorage.getItem('dagsplanerare_schemas') || '{}');
+            } catch {
+                return {};
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const savedFavorites = localStorage.getItem('dagsplanerare_favorites');
+                if (savedFavorites) {
+                    favorites = JSON.parse(savedFavorites);
+                }
+                
+                // Load last used schema
+                const lastSchemaId = localStorage.getItem('dagsplanerare_current');
+                if (lastSchemaId) {
+                    const schemas = getAllSchemas();
+                    if (schemas[lastSchemaId]) {
+                        schedule = schemas[lastSchemaId];
+                        currentSchemaId = lastSchemaId;
+                    }
+                }
+                
+                updateSchemaSelector();
+            } catch (e) {
+                console.error('Failed to load from storage:', e);
+            }
+        }
+
+        function updateSchemaSelector() {
+            const selector = document.getElementById('schemaSelector');
+            const schemas = getAllSchemas();
+            const schemaList = Object.values(schemas).sort((a, b) => a.name.localeCompare(b.name));
+            
+            selector.innerHTML = '<option value="">-- Nytt schema --</option>' + 
+                schemaList.map(s => `<option value="${s.id}" ${s.id === currentSchemaId ? 'selected' : ''}>${s.name}</option>`).join('');
+        }
+
+        function loadSelectedSchema() {
+            const selector = document.getElementById('schemaSelector');
+            const schemaId = selector.value;
+            
+            if (!schemaId) {
+                // New schema
+                currentSchemaId = null;
+                schedule = {
+                    name: 'Nytt schema',
+                    startDate: new Date().toISOString().split('T')[0],
+                    numDays: 5,
+                    days: {}
+                };
+                document.getElementById('scheduleName').value = schedule.name;
+                document.getElementById('startDate').value = schedule.startDate;
+                document.getElementById('numDays').value = schedule.numDays;
+                updateDays();
+                showStatus('Nytt schema skapat', 'success');
+                return;
+            }
+            
+            const schemas = getAllSchemas();
+            if (schemas[schemaId]) {
+                schedule = schemas[schemaId];
+                currentSchemaId = schemaId;
+                document.getElementById('scheduleName').value = schedule.name;
+                document.getElementById('startDate').value = schedule.startDate;
+                document.getElementById('numDays').value = schedule.numDays;
+                updateDays();
+                saveToStorage();
+                showStatus(`Laddat: ${schedule.name}`, 'success');
+            }
+        }
+
+        function saveSchemaAs() {
+            const name = prompt('Ange namn för schemat:', document.getElementById('scheduleName').value || 'Mitt schema');
+            if (!name) return;
+            
+            schedule.name = name;
+            document.getElementById('scheduleName').value = name;
+            
+            // Generate unique ID
+            currentSchemaId = 'schema_' + Date.now();
+            schedule.id = currentSchemaId;
+            
+            saveToStorage();
+            updateSchemaSelector();
+            showStatus(`Sparat som: ${name}`, 'success');
+        }
+
+        function deleteCurrentSchema() {
+            if (!currentSchemaId) {
+                showStatus('Inget schema valt att ta bort', 'error');
+                return;
+            }
+            
+            const schemaName = schedule.name;
+            const schemas = getAllSchemas();
+            delete schemas[currentSchemaId];
+            localStorage.setItem('dagsplanerare_schemas', JSON.stringify(schemas));
+            
+            // Reset to new schema
+            currentSchemaId = null;
+            schedule = {
+                name: 'Nytt schema',
+                startDate: new Date().toISOString().split('T')[0],
+                numDays: 5,
+                days: {}
+            };
+            
+            document.getElementById('scheduleName').value = schedule.name;
+            document.getElementById('startDate').value = schedule.startDate;
+            document.getElementById('numDays').value = schedule.numDays;
+            
+            updateSchemaSelector();
+            updateDays();
+            showStatus(`"${schemaName}" borttaget`, 'success');
+        }
+
+        // Export as image
+        async function exportAsImage() {
+            showStatus('Förbereder bild...', 'success');
+            
+            // Add export mode class to hide UI elements
+            document.body.classList.add('export-mode');
+            
+            // Wait for rerender
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            try {
+                // Use html2canvas if available, otherwise fallback
+                if (typeof html2canvas !== 'undefined') {
+                    const canvas = await html2canvas(document.getElementById('mainContent'), {
+                        backgroundColor: '#FEFCE8',
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: true
+                    });
+                    
+                    // Download
+                    const link = document.createElement('a');
+                    link.download = `${schedule.name.replace(/[^a-zA-Z0-9åäöÅÄÖ ]/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    showStatus('Bild sparad!', 'success');
+                } else {
+                    // Fallback: open print dialog
+                    window.print();
+                    showStatus('Använd "Spara som PDF" i utskriftsdialogen', 'success');
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                window.print();
+                showStatus('Använd "Spara som PDF" i utskriftsdialogen', 'success');
+            }
+            
+            // Remove export mode
+            document.body.classList.remove('export-mode');
+        }
+
+        // Status messages
+        function showStatus(message, type = 'success') {
+            const existing = document.querySelector('.status-message');
+            if (existing) existing.remove();
+
+            const status = document.createElement('div');
+            status.className = `status-message ${type}`;
+            status.textContent = message;
+            document.body.appendChild(status);
+
+            setTimeout(() => status.remove(), 3000);
+        }
+    </script>
+    <!-- html2canvas for image export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
