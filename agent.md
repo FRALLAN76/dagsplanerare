@@ -73,6 +73,7 @@ En visuell dagsplanerare för barn med symbolstöd, byggd som en standalone webb
 - **Precis redigering:** Individuella knappar för varje symbol i grupperade aktiviteter
 - **Ersätt-kopiering:** Kopiera dag ersätter hela måldagens innehåll (inte lägger till)
 - **Optimerad export:** Symbol-only bilder med minimalt whitespace
+- **Import/Export:** JSON-export och import för backup och delning mellan föräldrar
 
 ## Filstruktur
 
@@ -121,6 +122,7 @@ let schedule = {
 };
 ```
 
+### Import/Export Functions
 ### Viktiga Funktioner
 - `renderActivities(dayId)` - Renderar aktiviteter med gruppering
 - `renderRules()` - Renderar regler i rebus-format
@@ -128,6 +130,10 @@ let schedule = {
 - `copyDayToNext()` - Ersätter måldagens innehåll
 - `exportAsImage()` - Skapar bild utan UI-element
 - `searchSymbols()` - Söker symboler via API:er
+- `exportAsJSON()` - Exporterar alla scheman och favoriter som JSON
+- `importFromJSON()` - Importerar JSON-fil med validering
+- `performImport()` - Hanterar merge/replace av data
+- `validateImportData()` - Validerar filformat
 
 ### CSS Klasser
 - `.activity` - Enkel aktivitet
